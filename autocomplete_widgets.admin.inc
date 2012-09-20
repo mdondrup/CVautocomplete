@@ -50,6 +50,27 @@ function _autocomplete_widgets_widget_settings($op, $widget) {
         '#element_validate' => array('_element_validate_integer_positive'),
         '#required' => TRUE,
       );
+      if ($widget['type'] == 'autocomplete_widgets_cvdata'){
+	$form['cv_select'] = array (
+				    '#type' => 'select',
+				    '#title' => t('Choose chado CV'),
+				    '#default_value' => (isset($widget['cv_select']) ? $widget['cv_select'] : 'non selected'),
+				    '#options' => _get_cvs(),
+				    '#description' => t('Select the controlled Vocabulary to use.'),
+      );
+      
+	$form['obsolete'] = array(
+					    '#type' => 'checkbox',
+					    '#title' => t('Allow obsolete terms'),
+					    '#default_value' => (isset($widget['obsolete']) ? $widget['obsolete'] : FALSE),
+					   
+					    '#description' => t('Should also obsolete terms be  included?'),
+      );
+
+
+
+
+      };
       $form['autocomplete_match'] = array(
         '#type' => 'select',
         '#title' => t('Autocomplete matching'),
@@ -109,6 +130,13 @@ function _autocomplete_widgets_widget_settings($op, $widget) {
       return $form;
 
     case 'save':
-      return array('size', 'autocomplete_match', 'autocomplete_case', 'autocomplete_xss', 'i18n_flddata');
+      return array('size', 'cv_select', 'obsolete', 'autocomplete_match', 'autocomplete_case', 'autocomplete_xss', 'i18n_flddata');
   }
+}
+
+
+
+function _get_cvs() {
+# TODO: fix this
+  return array('42' => 'DUMMY', '4711' => 'Colgne');
 }
