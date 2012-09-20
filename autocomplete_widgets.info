@@ -1,5 +1,6 @@
-name = Autocomplete Widgets
+name = Autocomplete Widgets Mod
 description = Provides autocomplete widgets for CCK Text and Number fields.
-dependencies[] = content
+dependencies[] = content 
+dependencies[] = tripal_cv
 package = CCK
 core = 6.x
