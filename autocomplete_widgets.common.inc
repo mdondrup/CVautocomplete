@@ -44,8 +44,11 @@ function _autocomplete_widgets_get_options($field, $string = '', $match = 'conta
     else if ($field['widget']['type'] == 'autocomplete_widgets_flddata') {
       $results[$cid] = _autocomplete_widgets_get_options_flddata($field, $string, $match, $keys, $limit);
     }
+    else if ($field['widget']['type'] == 'autocomplete_widgets_cvdata') {
+      $results[$cid] = _autocomplete_widgets_get_options_cvdata($field, $string, $match, $keys, $limit);
+    }   
     else {
-      $results[$cid] = array();
+      $results[$cid] = array($field['widget']['type']);
     }
   }
 
@@ -107,6 +110,9 @@ function _autocomplete_widgets_get_options_allowvals($field, $string = '', $matc
   return $options;
 }
 
+
+
+
 /**
  * Fetch an array of options for the given widget (field data).
  *
@@ -147,4 +153,57 @@ function _autocomplete_widgets_get_options_flddata($field, $string = '', $match 
   }
 
   return $options;
+}
+
+
+function _autocomplete_widgets_get_options_cvdata($field, $string = '', $match = 'contains', $keys = NULL, $limit = NULL) {
+ $db_info = content_database_info($field);
+  $table = "CVTerm";
+  $column = "name";
+  $where = array();
+  $args = array();
+  if (!empty($field['widget']["cv_select"])) {
+    $cv_select =" AND cv_id = ". $field['widget']["cv_select"];
+  }
+
+  if ($string !== '') {
+    $lower = (!empty($field['widget']['autocomplete_case']) || $match == 'equals' ? '' : 'LOWER');
+    $match_operators = array(
+      'contains' => "LIKE $lower('%%%s%%')",
+      'equals' => "= '%s'",
+      'starts_with' => "LIKE $lower('%s%%')",
+    );
+    $where[] = "$lower(f.". $column .') '. (isset($match_operators[$match]) ? $match_operators[$match] : $match_operators['contains']);
+
+
+    $args[] = $string;
+  }
+  else if (isset($keys) && is_array($keys)) {
+    $where[] = 'f.'. $column .' IN ('. db_placeholders($keys) .')';
+    $args = array_merge($args, $keys);
+  }
+
+  $sql = 'SELECT f.name, f.definition FROM {'. $table .'} f WHERE '. 
+    implode(' AND ', $where) .
+    $cv_select .
+    ' ORDER BY f.'. $column;
+  if (!empty($field['widget']['i18n_flddata'])) {
+    // Adding a join with the node table allows the i18n rewrite the query
+    // to filter values from node for the proper language.
+     $sql = db_rewrite_sql($sql);
+  }
+  $previous_db = tripal_db_set_active('chado');
+ 
+  $result = $limit ? db_query_range($sql, $args, 0, $limit) : db_query($sql, $args);
+  tripal_db_set_active($previous_db);
+
+
+
+  $options = array();
+  while ($row = db_fetch_object($result)) {
+    $options[$row->name] = $row->name." ".substr($row->definition,0,30) ;
+  }
+
+  return $options;
+
 }

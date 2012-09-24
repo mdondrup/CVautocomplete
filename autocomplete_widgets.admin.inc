@@ -138,5 +138,13 @@ function _autocomplete_widgets_widget_settings($op, $widget) {
 
 function _get_cvs() {
 # TODO: fix this
-  return array('42' => 'DUMMY', '4711' => 'Colgne');
+  $sql = "SELECT * FROM {cv} WHERE NOT name = 'tripal' ORDER BY name ";
+  $previous_db = tripal_db_set_active('chado');  // use chado database
+  $res = db_query($sql);
+  tripal_db_set_active($previous_db);
+  $cvs = array();
+  while($cv = db_fetch_object($res)){
+    $cvs[$cv->cv_id] = $cv->name;
+  }
+  return $cvs;
 }

@@ -65,6 +65,10 @@ function autocomplete_widgets_widget_info() {
     'autocomplete_widgets_flddata' => array(
       'label' => t('Autocomplete for existing field data'), 'field types' => array('text'),
     ),
+    'autocomplete_widgets_cvdata' => array(
+      'label' => t('Autocomplete for chado CV data'), 'field types' => array('text'),
+    ),
+
   );
 }
 
@@ -121,7 +125,8 @@ function autocomplete_widgets_process($element, $edit, $form_state, $form) {
       }
     }
   }
-  else if ($field['widget']['type'] == 'autocomplete_widgets_flddata') {
+  else if ($field['widget']['type'] == 'autocomplete_widgets_flddata' ||
+	   $field['widget']['type'] == 'autocomplete_widgets_cvddata') {
     if (isset($element['#value'][$field_key])) {
       $value = $element['#value'][$field_key];
     }
