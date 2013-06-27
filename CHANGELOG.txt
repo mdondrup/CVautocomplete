@@ -1,4 +1,13 @@
 
+6.x-0.1-dev forked by mdondrup
+===========
+
+- Forked into CVautocomplete to add support for Tripal CV fields
+- Other functioninality is still there.
+- Now depends on tripal_cv
+
+
+
 6.x-1.x-dev
 ===========
 
