@@ -126,7 +126,7 @@ function autocomplete_widgets_process($element, $edit, $form_state, $form) {
     }
   }
   else if ($field['widget']['type'] == 'autocomplete_widgets_flddata' ||
-	   $field['widget']['type'] == 'autocomplete_widgets_cvddata') {
+	   $field['widget']['type'] == 'autocomplete_widgets_cvdata') {
     if (isset($element['#value'][$field_key])) {
       $value = $element['#value'][$field_key];
     }
